@@ -2,9 +2,9 @@ import SimpleITK as sitk
 
 
 def main():
-    image = sitk.ReadImage("C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73\\NM000037.dcm")
+    image = sitk.ReadImage("C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73\\NM000031.dcm")
 
-    roi = sitk.ReadImage("C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nii")
+    roi = sitk.ReadImage("C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd")
 
     resampler = sitk.ResampleImageFilter()
     resampler.SetReferenceImage(image)
