@@ -31,7 +31,9 @@ classifiers = [
 ]
 dependencies = [
 	'numpy',
-	'SimpleITK'
+	'SimpleITK',
+	'matplotlib',
+	'lmfit'
 ]
 
 [project.urls]
@@ -58,4 +60,4 @@ warn_unused_configs = true
 no_implicit_reexport = true
 
 [tool.flake8]
-max-line-length = 100
+#max-line-length = 100

@@ -1,23 +1,48 @@
 import SimpleITK as sitk
+import dynamit
+import os
+import matplotlib.pyplot as plt
 
 
 def main():
-    image = sitk.ReadImage("C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73\\NM000031.dcm")
 
-    roi = sitk.ReadImage("C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd")
+    dyn = dynamit.load_dynamic(
+        os.path.join('test', 'data', '8_3V')
+    )
+    image = dyn.image
+    acqtimes = dyn.acq_times
+
+    print("Image Size:", image.GetSize())
+    print("Image Spacing:", image.GetSpacing())
+    print("Image Dimension:", image.GetDimension())
+    print("Image Origin:", image.GetOrigin())
+    print("Acquisition time points: ", acqtimes)
+    print()
+
+    roi = sitk.ReadImage(
+        os.path.join('test', 'data', '8_3V_seg', 'Segmentation.nrrd')
+    )
+    print("ROI Size:", image.GetSize())
+    print("ROI Spacing:", image.GetSpacing())
+    print("ROI Dimension:", image.GetDimension())
+    print("ROI Origin:", image.GetOrigin())
+    print()
+
+    img3 = image[:, :, :, 0]
 
     resampler = sitk.ResampleImageFilter()
-    resampler.SetReferenceImage(image)
+    resampler.SetReferenceImage(img3)
     resampler.SetInterpolator(sitk.sitkNearestNeighbor)
     resampler.SetOutputPixelType(roi.GetPixelID())
     resampled_roi = resampler.Execute(roi)
 
-    label_stats_filter = sitk.LabelStatisticsImageFilter()
-    label_stats_filter.Execute(image, resampled_roi)
+    means = dynamit.roi_mean(dyn, resampled_roi)
 
-    for label in label_stats_filter.GetLabels():
-        print(f"Label: {label}")
-        print(f"Mean ROI-value: {label_stats_filter.GetMean(label)}")
+    fig, ax = plt.subplots()
+    ax.plot(acqtimes, means[1], 'kx-', label="1")
+    ax.plot(acqtimes, means[2], 'gx-', label="2")
+    # ax.plot(acqtimes, means[3], 'rx-', label="3")
+    plt.show()
 
 
 if __name__ == "__main__":
