@@ -1,0 +1,38 @@
+import unittest
+import dynamit
+
+
+class TestModelStep2(unittest.TestCase):
+
+    def test_model_step_2_case0(self):
+        amp = 0.7
+        extent = 10.0
+
+        tp = [0.0, 4.3, 7.5, 12.4, 16.2]
+        in_func = [0.0, 10.3, 12.1, 8.1, 4.1]
+
+        m = dynamit.model_step_2(amp, extent, tp, in_func)
+
+        self.assertEqual(5, len(m))
+        self.assertAlmostEqual(0.0, m[0], places=3)
+        self.assertAlmostEqual(15.5015, m[1], places=3)
+        self.assertAlmostEqual(40.5895, m[2], places=3)
+        self.assertAlmostEqual(70.4035, m[3], places=3)
+        self.assertAlmostEqual(61.5472, m[4], places=3)
+
+    def test_model_step_2_case1(self):
+        amp = 0.1
+        extent = 3.0
+
+        tp = [0.0, 3.7, 7.1, 10.2, 13.5, 17.8]
+        in_func = [0.0, 572.1, 3021.5, 123.7, 50.21, 10.5]
+
+        m = dynamit.model_step_2(amp, extent, tp, in_func)
+
+        self.assertEqual(6, len(m))
+        self.assertAlmostEqual(0.0, m[0], places=4)
+        self.assertAlmostEqual(102.0502, m[1], places=3)
+        self.assertAlmostEqual(582.2645, m[2], places=3)
+        self.assertAlmostEqual(457.7583, m[3], places=3)
+        self.assertAlmostEqual(25.0844, m[4], places=3)
+        self.assertAlmostEqual(7.3057, m[5], places=3)

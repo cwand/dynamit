@@ -1,13 +1,13 @@
 import SimpleITK as sitk
 import dynamit
-import os
 import matplotlib.pyplot as plt
 
 
 def main():
 
     dyn = dynamit.load_dynamic(
-        os.path.join('test', 'data', '8_3V')
+        # os.path.join('test', 'data', '8_3V')
+        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
     )
     image = dyn.image
     acqtimes = dyn.acq_times
@@ -20,7 +20,8 @@ def main():
     print()
 
     roi = sitk.ReadImage(
-        os.path.join('test', 'data', '8_3V_seg', 'Segmentation.nrrd')
+        # os.path.join('test', 'data', '8_3V_seg', 'Segmentation.nrrd')
+        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
     )
     print("ROI Size:", image.GetSize())
     print("ROI Spacing:", image.GetSpacing())
@@ -38,10 +39,12 @@ def main():
 
     means = dynamit.roi_mean(dyn, resampled_roi)
 
+    # fit(means, acqtimes, ...)
+
     fig, ax = plt.subplots()
     ax.plot(acqtimes, means[1], 'kx-', label="1")
     ax.plot(acqtimes, means[2], 'gx-', label="2")
-    # ax.plot(acqtimes, means[3], 'rx-', label="3")
+    ax.plot(acqtimes, means[3], 'rx-', label="3")
     plt.show()
 
 

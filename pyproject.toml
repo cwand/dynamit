@@ -33,6 +33,7 @@ dependencies = [
 	'numpy',
 	'SimpleITK',
 	'matplotlib',
+	'scipy',
 	'lmfit'
 ]
 
