@@ -2,7 +2,6 @@ import SimpleITK as sitk
 import dynamit
 import matplotlib.pyplot as plt
 import lmfit
-import corner
 
 
 def main():
@@ -43,14 +42,14 @@ def main():
 
     means = dynamit.roi_mean(dyn, resampled_roi)
 
-
     amp1 = 0.05
     extent1 = 20
     amp2 = 0.01
     extent2 = 170
     m = dynamit.model_step_4(amp1, extent1, amp2, extent2, acqtimes, means[3])
 
-    model = lmfit.Model(dynamit.model_step_4, independent_vars=['t', 'in_func'])
+    model = lmfit.Model(
+        dynamit.model_step_4, independent_vars=['t', 'in_func'])
     res = model.fit(means[2], t=acqtimes, in_func=means[3],
                     amp1=amp1, extent1=extent1,
                     amp2=amp2, extent2=extent2)

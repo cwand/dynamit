@@ -53,5 +53,3 @@ def model_step_4(amp1: float,
                                  epsabs=1e-2, epsrel=1e-4)
         res.append(y[0])
     return res
-
-
