@@ -19,10 +19,10 @@ def roi_mean(dyn: Dynamic, roi: sitk.Image) -> dict[int, list[float]]: ...
 
 # From model.py
 
-def model_step_2(amp: float, extent: float, t: list[float],
-                 in_func: list[float]) -> list[float]: ...
+def model_step(amp: float, extent: float, t: list[float],
+               in_func: list[float]) -> list[float]: ...
 
-def model_step_4(amp1: float,
+def model_step_2(amp1: float,
                  extent1: float,
                  amp2: float,
                  extent2: float,

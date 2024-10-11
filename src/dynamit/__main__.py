@@ -46,15 +46,15 @@ def main():
     extent1 = 20
     amp2 = 0.01
     extent2 = 170
-    m = dynamit.model_step_4(amp1, extent1, amp2, extent2, acqtimes, means[3])
+    m = dynamit.model_step_2(amp1, extent1, amp2, extent2, acqtimes, means[3])
 
     model = lmfit.Model(
-        dynamit.model_step_4, independent_vars=['t', 'in_func'])
+        dynamit.model_step_2, independent_vars=['t', 'in_func'])
     res = model.fit(means[2], t=acqtimes, in_func=means[3],
                     amp1=amp1, extent1=extent1,
                     amp2=amp2, extent2=extent2)
     lmfit.report_fit(res)
-    best_fit = dynamit.model_step_4(res.best_values['amp1'],
+    best_fit = dynamit.model_step_2(res.best_values['amp1'],
                                     res.best_values['extent1'],
                                     res.best_values['amp2'],
                                     res.best_values['extent2'],
