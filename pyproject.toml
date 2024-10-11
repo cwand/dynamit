@@ -34,7 +34,11 @@ dependencies = [
 	'SimpleITK',
 	'matplotlib',
 	'scipy',
-	'lmfit'
+	'lmfit',
+	'emcee',
+	'tqdm',
+	'pandas',
+	'corner'
 ]
 
 [project.urls]
