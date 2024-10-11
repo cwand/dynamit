@@ -26,6 +26,20 @@ class Dynamic:
         self.image = image_in
         self.acq_times = acq_times_in
 
+    def report(self) -> str:
+        """Creates a report on the loaded images
+
+        Return value:
+        A string containing basic information on the loade images.
+        """
+
+        s = ""
+        s = s + "Image size: " + str(self.image.GetSize()) + "\n"
+        s = s + "Image spacing: " + str(self.image.GetSpacing()) + "\n"
+        s = s + "Image dimension: " + str(self.image.GetDimension()) + "\n"
+        s = s + "Acquisition time points: " + str(self.acq_times)
+        return s
+
 
 def get_acq_datetime(dicom_path: str) -> datetime:
     """Get an image acquisition datetime from its dicom header.

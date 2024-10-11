@@ -34,6 +34,18 @@ class TestLoadDynamic(unittest.TestCase):
         self.assertEqual(dyn.acq_times,
                          [0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
 
+    def test_load_dynamic_report(self):
+        dcm_path = os.path.join('test', 'data', '8_3V')
+        dyn = dynamit.load_dynamic(dcm_path)
+        s = dyn.report()
+        x = s.splitlines()
+        self.assertEqual(4, len(x))
+        self.assertEqual("Image size: (128, 128, 64, 9)", x[0])
+        self.assertEqual("Image spacing: (4.92, 4.92, 4.92, 1.0)", x[1])
+        self.assertEqual("Image dimension: 4", x[2])
+        self.assertEqual("Acquisition time points: [0.0, 3.0, 6.3, 9.5, "
+                         "12.8, 16.0, 19.3, 22.5, 25.8]", x[3])
+
 
 class TestROIMean(unittest.TestCase):
 
