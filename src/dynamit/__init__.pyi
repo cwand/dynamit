@@ -1,7 +1,13 @@
 import SimpleITK as sitk
 from datetime import datetime
+from typing import Any
 
 # From core.py
+
+def get_acq_datetime(dicom_path: str) -> datetime: ...
+
+
+# From dynamic.py
 
 class Dynamic:
 
@@ -12,11 +18,21 @@ class Dynamic:
 
     def report(self) -> str: ...
 
-def get_acq_datetime(dicom_path: str) -> datetime: ...
-
 def load_dynamic(dicom_path: str) -> Dynamic: ...
 
 def roi_mean(dyn: Dynamic, roi: sitk.Image) -> dict[int, list[float]]: ...
+
+
+# From image.py
+
+def load_dynamic_series(dicom_path: str) \
+        -> dict[str, Any]: ...
+
+def resample_series_to_reference(series: list[sitk.Image],
+                                 ref: sitk.Image) -> list[sitk.Image]: ...
+
+def series_roi_means(series: list[sitk.Image],
+                     roi: sitk.Image) -> dict[int, list[float]]: ...
 
 
 # From model.py
