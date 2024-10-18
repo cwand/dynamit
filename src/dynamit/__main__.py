@@ -15,12 +15,14 @@ def main():
     # print()
 
     dyn = dynamit.load_dynamic_series(
-        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73")
+        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
+        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
+    )
 
     roi = sitk.ReadImage(
         # os.path.join('test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
-        # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
+        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
+        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
     )
 
     # img3 = dyn.image[:, :, :, 0]
@@ -42,25 +44,40 @@ def main():
     amp2 = 0.01
     extent2 = 170
 
+    print("Fitting Model STEP1")
+    model = lmfit.Model(
+        dynamit.model_step, independent_vars=['t', 'in_func'])
+    res = model.fit(means[2], t=t, in_func=means[3],
+                    amp=amp2, extent=extent2)
+    lmfit.report_fit(res)
+    best_fit = dynamit.model_step(res.best_values['amp'],
+                                  res.best_values['extent'],
+                                  t,
+                                  means[3])
+    print()
+
+    print("Fitting Model STEP2")
     model = lmfit.Model(
         dynamit.model_step_2, independent_vars=['t', 'in_func'])
     res = model.fit(means[2], t=t, in_func=means[3],
                     amp1=amp1, extent1=extent1,
                     amp2=amp2, extent2=extent2)
     lmfit.report_fit(res)
-    best_fit = dynamit.model_step_2(res.best_values['amp1'],
-                                    res.best_values['extent1'],
-                                    res.best_values['amp2'],
-                                    res.best_values['extent2'],
-                                    t,
-                                    means[3])
+    best_fit2 = dynamit.model_step_2(res.best_values['amp1'],
+                                     res.best_values['extent1'],
+                                     res.best_values['amp2'],
+                                     res.best_values['extent2'],
+                                     t,
+                                     means[3])
+    print()
 
     fig, ax = plt.subplots()
     # ax.plot(acqtimes, means[1], 'g.', label="1")
     ax.plot(t, means[2], 'g.', label="Kidney")
     ax.plot(t, means[3], 'r.', label="Blood")
     # ax.plot(dyn.acq_times, m, 'k-', label="model0")
-    ax.plot(t, best_fit, 'g-', label="Fit")
+    ax.plot(t, best_fit, 'g-', label="Fit STEP1")
+    ax.plot(t, best_fit2, 'k-', label="Fit STEP2")
     plt.legend()
     plt.show()
 
