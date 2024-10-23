@@ -153,3 +153,10 @@ def model_step_2(amp1: float,
                                  epsabs=1e-2, epsrel=1e-4)
         res.append(y[0])
     return res
+
+
+def model_patlak(k: float,
+                 v0: float,
+                 t: list[float],
+                 in_func: list[float]) -> list[float]:
+    return [0.0, 0.0, 0.0, 0.0, 0.0]

@@ -6,34 +6,15 @@ import lmfit
 
 def main():
 
-    # dyn = dynamit.load_dynamic(
-    #    # os.path.join('test', 'data', '8_3V')
-    #    "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
-    #    # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
-    # )
-    # print(dyn.report())
-    # print()
-
     dyn = dynamit.load_dynamic_series(
-        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
-        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
+        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
+        # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
     )
 
     roi = sitk.ReadImage(
-        # os.path.join('test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
-        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
+        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
+        # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
     )
-
-    # img3 = dyn.image[:, :, :, 0]
-
-    # resampler = sitk.ResampleImageFilter()
-    # resampler.SetReferenceImage(img3)
-    # resampler.SetInterpolator(sitk.sitkNearestNeighbor)
-    # resampler.SetOutputPixelType(roi.GetPixelID())
-    # resampled_roi = resampler.Execute(roi)
-
-    # means = dynamit.roi_mean(dyn, resampled_roi)
 
     resampled = dynamit.resample_series_to_reference(dyn['img'], roi)
     t = dyn['acq']

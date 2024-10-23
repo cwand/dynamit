@@ -46,3 +46,8 @@ def model_step_2(amp1: float,
                  extent2: float,
                  t: list[float],
                  in_func: list[float]) -> list[float]: ...
+
+def model_patlak(k: float,
+                 v0: float,
+                 t: list[float],
+                 in_func: list[float]) -> list[float]: ...
