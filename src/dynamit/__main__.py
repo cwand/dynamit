@@ -74,10 +74,8 @@ def main():
     print()
 
     fig, ax = plt.subplots()
-    # ax.plot(acqtimes, means[1], 'g.', label="1")
     ax.plot(t, means[2], 'g.', label="Kidney")
     ax.plot(t, means[3], 'r.', label="Blood")
-    # ax.plot(dyn.acq_times, m, 'k-', label="model0")
     ax.plot(t[0:t_cut], best_fit, 'g-', label="Fit STEP1")
     ax.plot(t[0:t_cut], best_fit2, 'k-', label="Fit STEP2")
     ax.plot(t[0:t_cut], best_fit3, 'b-', label="Fit PATLAK")

@@ -7,22 +7,6 @@ from typing import Any
 def get_acq_datetime(dicom_path: str) -> datetime: ...
 
 
-# From dynamic.py
-
-class Dynamic:
-
-    image: sitk.Image
-    acq_times: list[float]
-
-    def __init__(self, image_in: sitk.Image, acq_times_in: list[float]): ...
-
-    def report(self) -> str: ...
-
-def load_dynamic(dicom_path: str) -> Dynamic: ...
-
-def roi_mean(dyn: Dynamic, roi: sitk.Image) -> dict[int, list[float]]: ...
-
-
 # From image.py
 
 def load_dynamic_series(dicom_path: str) \
