@@ -6,6 +6,8 @@ from typing import Any
 
 def get_acq_datetime(dicom_path: str) -> datetime: ...
 
+def shift_time(y: list[float], t: list[float],
+               deltat: float) -> list[float]: ...
 
 # From image.py
 
