@@ -15,6 +15,10 @@ def main():
         "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
         # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
     )
+    # resampler = sitk.ResampleImageFilter()
+    # resampler.SetReferenceImage(dyn['img'][0])
+    # resampler.SetInterpolator(sitk.sitkNearestNeighbor)
+    # roi_r = resampler.Execute(roi)
 
     resampled = dynamit.resample_series_to_reference(dyn['img'], roi)
     t = dyn['acq']
@@ -26,30 +30,47 @@ def main():
     extent2 = 170
 
     print("Fitting Model STEP1")
+    t_cut = 30
     model = lmfit.Model(
         dynamit.model_step, independent_vars=['t', 'in_func'])
-    res = model.fit(means[2], t=t, in_func=means[3],
-                    amp=amp2, extent=extent2)
-    lmfit.report_fit(res)
-    best_fit = dynamit.model_step(res.best_values['amp'],
-                                  res.best_values['extent'],
-                                  t,
-                                  means[3])
+    res1 = model.fit(means[2][0:t_cut], t=t[0:t_cut],
+                     in_func=means[3][0:t_cut], amp=amp2, extent=extent2)
+    lmfit.report_fit(res1)
+    best_fit = dynamit.model_step(res1.best_values['amp'],
+                                  res1.best_values['extent'],
+                                  t[0:t_cut],
+                                  means[3][0:t_cut])
     print()
 
     print("Fitting Model STEP2")
     model = lmfit.Model(
         dynamit.model_step_2, independent_vars=['t', 'in_func'])
-    res = model.fit(means[2], t=t, in_func=means[3],
-                    amp1=amp1, extent1=extent1,
-                    amp2=amp2, extent2=extent2)
-    lmfit.report_fit(res)
-    best_fit2 = dynamit.model_step_2(res.best_values['amp1'],
-                                     res.best_values['extent1'],
-                                     res.best_values['amp2'],
-                                     res.best_values['extent2'],
-                                     t,
-                                     means[3])
+    res2 = model.fit(means[2][0:t_cut], t=t[0:t_cut],
+                     in_func=means[3][0:t_cut],
+                     amp1=amp1, extent1=extent1,
+                     amp2=amp2, extent2=extent2)
+    lmfit.report_fit(res2)
+    best_fit2 = dynamit.model_step_2(res2.best_values['amp1'],
+                                     res2.best_values['extent1'],
+                                     res2.best_values['amp2'],
+                                     res2.best_values['extent2'],
+                                     t[0:t_cut],
+                                     means[3][0:t_cut])
+    print()
+
+    print("Fitting Model PATLAK")
+    t_cut = 30
+    k = 0.01
+    v0 = 0.7
+    model = lmfit.Model(dynamit.model_patlak,
+                        independent_vars=['t', 'in_func'])
+    res3 = model.fit(means[2][0:t_cut], t=t[0:t_cut],
+                     in_func=means[3][0:t_cut], k=k, v0=v0)
+    lmfit.report_fit(res3)
+    best_fit3 = dynamit.model_patlak(res3.best_values['k'],
+                                     res3.best_values['v0'],
+                                     t[0:t_cut],
+                                     means[3][0:t_cut])
     print()
 
     fig, ax = plt.subplots()
@@ -57,8 +78,9 @@ def main():
     ax.plot(t, means[2], 'g.', label="Kidney")
     ax.plot(t, means[3], 'r.', label="Blood")
     # ax.plot(dyn.acq_times, m, 'k-', label="model0")
-    ax.plot(t, best_fit, 'g-', label="Fit STEP1")
-    ax.plot(t, best_fit2, 'k-', label="Fit STEP2")
+    ax.plot(t[0:t_cut], best_fit, 'g-', label="Fit STEP1")
+    ax.plot(t[0:t_cut], best_fit2, 'k-', label="Fit STEP2")
+    ax.plot(t[0:t_cut], best_fit3, 'b-', label="Fit PATLAK")
     plt.legend()
     plt.show()
 

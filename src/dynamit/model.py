@@ -159,4 +159,21 @@ def model_patlak(k: float,
                  v0: float,
                  t: list[float],
                  in_func: list[float]) -> list[float]:
-    return [0.0, 0.0, 0.0, 0.0, 0.0]
+    """Solves the Patlak-model.
+    In the Patlak model the observed signal is assumed to be a constant k times
+    the integrated input function up until that point, plus another constant v0
+    times the input function value at that time point:
+    R(t) = k * int(in_func, 0, t) + v0*in_func(t)
+
+    Arguments:
+    k       --  The constant k in the Patlak model.
+    v0      --  The constant v0 in the Patlak model.
+    t       --  The time points of the input function samples.
+    in_func --  The input function samples.
+
+    Return value:
+    A list containing the modeled values at each time point.
+    """
+
+    return [k * scipy.integrate.trapezoid(in_func[0:i+1], t[0:i+1])
+            + v0 * in_func[i] for i in range(len(t))]
