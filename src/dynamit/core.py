@@ -1,5 +1,6 @@
 import SimpleITK as sitk
 from datetime import datetime
+import numpy as np
 
 
 def get_acq_datetime(dicom_path: str) -> datetime:
@@ -27,3 +28,34 @@ def get_acq_datetime(dicom_path: str) -> datetime:
     sd = sd + " " + img_time[:2] + ":" + img_time[2:4] + ":" + img_time[4:6]
     sd = sd + "." + img_time[-1].ljust(6, "0")
     return datetime.fromisoformat(sd)
+
+
+def shift_time(y: list[float], t: list[float],
+               deltat: float) -> list[float]:
+    """Given the samples y of a function y(t) sampled at the time points t,
+    this function computes the samples of another function x(t) at the same
+    time points under the assumption that x(t) = y(t-deltat), i.e. that x is
+    shifted deltat units of time to the right from y. Since y is not
+    necessarily known at these time points, y is linearly interpolated between
+    the samples.
+    Depending on the sign of deltat we will have to extrapolate y(t) either
+    before the first sample or after the last sample. In either case we simply
+    use the value of the extreme sample value for the extrapolation, i.e. if
+    deltat is positive any extrapolation beyond the first sample point will
+    simply take the value of the first sample, and if deltat is negative any
+    extrapolation beyond the last sample point will take the value of the last
+    sample.
+
+    Arguments:
+    y       --  The samples of the original function at time points t
+    t       --  The time points of the samples of the original function
+    deltat  --  The time shift
+
+    Return value:
+    A list of the interpolated values of the function x(t) = y(t-deltat).
+    """
+
+    # Construct the timepoints where y should be interpolated
+    t_inter = [tt - deltat for tt in t]
+
+    return list(np.interp(t_inter, t, y))

@@ -1,19 +1,20 @@
 import SimpleITK as sitk
 import dynamit
 import matplotlib.pyplot as plt
-import lmfit
+# import lmfit
+import numpy as np
 
 
 def main():
 
     dyn = dynamit.load_dynamic_series(
-        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
-        # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
+        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
+        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
     )
 
     roi = sitk.ReadImage(
-        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
-        # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
+        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
+        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
     )
     # resampler = sitk.ResampleImageFilter()
     # resampler.SetReferenceImage(dyn['img'][0])
@@ -24,6 +25,11 @@ def main():
     t = dyn['acq']
     means = dynamit.series_roi_means(resampled, roi)
 
+    delta_t = 6
+    shift_t = [tt - delta_t for tt in t]
+    blood_shift = np.interp(shift_t, t, means[3])
+
+    '''
     amp1 = 0.05
     extent1 = 20
     amp2 = 0.01
@@ -72,13 +78,15 @@ def main():
                                      t[0:t_cut],
                                      means[3][0:t_cut])
     print()
+    '''
 
     fig, ax = plt.subplots()
-    ax.plot(t, means[2], 'g.', label="Kidney")
-    ax.plot(t, means[3], 'r.', label="Blood")
-    ax.plot(t[0:t_cut], best_fit, 'g-', label="Fit STEP1")
-    ax.plot(t[0:t_cut], best_fit2, 'k-', label="Fit STEP2")
-    ax.plot(t[0:t_cut], best_fit3, 'b-', label="Fit PATLAK")
+    ax.plot(t, means[2], 'gx-', label="Kidney")
+    ax.plot(t, means[3], 'rx-', label="Blood")
+    ax.plot(t, blood_shift, 'kx-', label="Blood shifted")
+    # ax.plot(t[0:t_cut], best_fit, 'g-', label="Fit STEP1")
+    # ax.plot(t[0:t_cut], best_fit2, 'k-', label="Fit STEP2")
+    # ax.plot(t[0:t_cut], best_fit3, 'b-', label="Fit PATLAK")
     plt.legend()
     plt.show()
 
