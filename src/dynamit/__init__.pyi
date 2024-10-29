@@ -1,6 +1,6 @@
 import SimpleITK as sitk
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional, Union
 
 # From core.py
 
@@ -20,6 +20,10 @@ def resample_series_to_reference(series: list[sitk.Image],
 def series_roi_means(series: list[sitk.Image],
                      roi: sitk.Image) -> dict[int, list[float]]: ...
 
+def lazy_series_roi_means(series_path: str,
+                          roi_path: str,
+                          resample: Optional[str] = ...)\
+        -> dict[Union[str, int], list[float]]: ...
 
 # From model.py
 

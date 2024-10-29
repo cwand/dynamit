@@ -1,7 +1,7 @@
 import SimpleITK as sitk
 from collections import defaultdict
 import dynamit
-from typing import Any
+from typing import Any, Optional, Union
 
 
 def load_dynamic_series(dicom_path: str) -> dict[str, Any]:
@@ -93,6 +93,86 @@ def series_roi_means(series: list[sitk.Image],
         # Get label stats for the i'th image in the series for all labels
         label_stats_filter.Execute(series[i], roi)
 
+        for label in label_stats_filter.GetLabels():
+            # Append the mean value to the list for each label.
+            res[label].append(label_stats_filter.GetMean(label))
+
+    return res
+
+
+def lazy_series_roi_means(series_path: str,
+                          roi_path: str,
+                          resample: Optional[str] = None)\
+        -> dict[Union[str, int], list[float]]:
+    """Do a lazy calculation of mean image values in a ROI. Lazy in this
+    context means that the images are loaded one at a time and the mean values
+    computed, before the image is removed from memory and the next image is
+    loaded. This saves some memory usage compared to loading all images in a
+    list and then computing ROI-means, but on the other hand no manipulation
+    of the images can be performed after the call of this function.
+    The images or the ROI can be resampled before calculation of the mean by
+    using the resample argument. To resample the ROI to the sace of the images
+    set resample='roi', and to resample the images to the ROI space use
+    resample='img'. In either case the resampling is done using
+    nearest-neighbour values.
+    The function returns a dictionary object. They keys in the object are
+    'tacq' which stores a list of acquisition times (relative to the first
+    image) and the labels of the ROI (integers).
+
+    Arguments:
+    series_path --  The path to the images series dicom files
+    roi_path    --  The path to the ROI dicom files
+    resample    --  The resmapling strategy. Allowed values are None (no
+                    resampling), 'roi' (resample ROI to image space) or 'img'
+                    (resample images to ROI space).
+
+    Return value:
+    A dict object with ROI labels as keys and a list with ROI mean values for
+    every time point in the dynamic series as values. Furthermore the
+    acquisition times are stored in a list under the key 'tacq'.
+    """
+
+    res: dict[Union[str, int], list[float]] = defaultdict(list)
+
+    # Prepare series reader
+    reader = sitk.ImageSeriesReader()
+
+    # Get dicom file names in folder sorted according to acquisition time.
+    dcm_names = reader.GetGDCMSeriesFileNames(series_path)
+
+    # Read ROI image
+    roi = sitk.ReadImage(roi_path)
+
+    # Resample ROI if chosen
+    if resample == 'roi':
+        resampler = sitk.ResampleImageFilter()
+        resampler.SetReferenceImage(sitk.ReadImage(dcm_names[0]))
+        resampler.SetInterpolator(sitk.sitkNearestNeighbor)
+        roi = resampler.Execute(roi)
+
+    # Prepare label statistics filter
+    label_stats_filter = sitk.LabelStatisticsImageFilter()
+
+    # Get acquisition time of first image
+    acq0 = dynamit.get_acq_datetime(dcm_names[0])
+
+    for name in dcm_names:
+        # Load images in order
+        img = sitk.ReadImage(name)
+
+        # Resample image if chosen
+        if resample == 'img':
+            resampler = sitk.ResampleImageFilter()
+            resampler.SetReferenceImage(roi)
+            resampler.SetInterpolator(sitk.sitkNearestNeighbor)
+            img = resampler.Execute(img)
+
+        # Find acquisition time and store in list
+        res['tacq'].append(
+            (dynamit.get_acq_datetime(name) - acq0).total_seconds())
+
+        # Apply label stats filter and read ROI means
+        label_stats_filter.Execute(img, roi)
         for label in label_stats_filter.GetLabels():
             # Append the mean value to the list for each label.
             res[label].append(label_stats_filter.GetMean(label))

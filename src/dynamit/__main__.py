@@ -8,13 +8,13 @@ import numpy as np
 def main():
 
     dyn = dynamit.load_dynamic_series(
-        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
-        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
+        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
+        # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
     )
 
     roi = sitk.ReadImage(
-        # "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
-        "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
+        "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH-seg\\kthseg.nrrd"
+        # "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\segs\\segs.nrrd"
     )
     # resampler = sitk.ResampleImageFilter()
     # resampler.SetReferenceImage(dyn['img'][0])
