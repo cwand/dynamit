@@ -102,7 +102,9 @@ def series_roi_means(series: list[sitk.Image],
 
 def lazy_series_roi_means(series_path: str,
                           roi_path: str,
-                          resample: Optional[str] = None)\
+                          resample: Optional[str] = None,
+                          labels: Optional[dict[
+                              Union[str, int], Union[str, int]]] = None)\
         -> dict[Union[str, int], list[float]]:
     """Do a lazy calculation of mean image values in a ROI. Lazy in this
     context means that the images are loaded one at a time and the mean values
@@ -117,20 +119,32 @@ def lazy_series_roi_means(series_path: str,
     nearest-neighbour values.
     The function returns a dictionary object. They keys in the object are
     'tacq' which stores a list of acquisition times (relative to the first
-    image) and the labels of the ROI (integers).
+    image) and the labels of the ROI (integers) (see the keyword argument
+    'labels' for options).
 
     Arguments:
     series_path --  The path to the images series dicom files
     roi_path    --  The path to the ROI dicom files
     resample    --  The resmapling strategy. Allowed values are None (no
-                    resampling), 'roi' (resample ROI to image space) or 'img'
-                    (resample images to ROI space).
+                    resampling, default value), 'roi' (resample ROI to image
+                    space) or 'img' (resample images to ROI space).
+    labels      --  Choose different labels for the resulting dict object. By
+                    default the label values in the ROI image is chosen. A
+                    dictionary can be inserted here to replace those values. If
+                    for example the ROI label value 1 should be replaced with
+                    'left' and the value 2 should be replaced with 'right' use
+                    the argument labels={1: 'left', 2: 'right'}
 
     Return value:
     A dict object with ROI labels as keys and a list with ROI mean values for
     every time point in the dynamic series as values. Furthermore the
     acquisition times are stored in a list under the key 'tacq'.
     """
+
+    # Input sanitation: if no label substitution is needed, the argument is
+    # just an empty dict
+    if labels is None:
+        labels = {}
 
     res: dict[Union[str, int], list[float]] = defaultdict(list)
 
@@ -175,6 +189,7 @@ def lazy_series_roi_means(series_path: str,
         label_stats_filter.Execute(img, roi)
         for label in label_stats_filter.GetLabels():
             # Append the mean value to the list for each label.
-            res[label].append(label_stats_filter.GetMean(label))
+            res[labels.get(label, label)].append(
+                label_stats_filter.GetMean(label))
 
     return res
