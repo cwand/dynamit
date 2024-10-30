@@ -1,9 +1,10 @@
-# import SimpleITK as sitk
+import argparse
+import sys
+
 import dynamit
 import matplotlib.pyplot as plt
 import lmfit
 import numpy as np
-import sys
 
 
 def main():
@@ -88,14 +89,46 @@ def main():
     plt.show()
 
 
-def roi_mean(argv: list[str]):
-    return
+def roi_means():
+
+    parser = argparse.ArgumentParser(
+        description="Calculate image series ROI-mean values."
+    )
+
+    parser.add_argument('task', choices=['roi_means'])
+
+    parser.add_argument('image_dir',
+                        help='The directory containing the image series.')
+    parser.add_argument('roi_file',
+                        help='The file containing the ROI image.')
+    parser.add_argument('output_file',
+                        help='Where to write the output file.')
+
+    args = parser.parse_args()
+
+    print("Starting image read and ROI-mean calculation.")
+    print("Reading images from ", args.image_dir, ".")
+    print("Reading ROI image from ", args.roi_file, ".")
+    print("Processing...")
+    dyn = dynamit.lazy_series_roi_means(args.image_dir,
+                                        args.roi_file,
+                                        resample='img')
+    print("... done!")
+    print()
+
+    print("Saving images to file ", args.output_file, ".")
+    print("Saving...")
+    columns = []
+    header = []
+    for label in dyn:
+        columns.append(dyn[label])
+        header.append(label)
+
+    data = np.column_stack(columns)
+    np.savetxt(args.output_file, data, header=str(header))
+    print("... done!")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        main()
-    elif sys.argv[1] == 'roi_mean':
-        roi_mean(sys.argv[2:])
-    else:
-        main()
+    if sys.argv[1] == 'roi_means':
+        roi_means()
