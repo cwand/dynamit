@@ -119,16 +119,58 @@ def roi_means():
     print("Saving images to file ", args.output_file, ".")
     print("Saving...")
     columns = []
-    header = []
+    header = ""
     for label in dyn:
         columns.append(dyn[label])
-        header.append(label)
+        header = header + str(label) + "   "
+
+    print(header)
 
     data = np.column_stack(columns)
-    np.savetxt(args.output_file, data, header=str(header))
+    np.savetxt(args.output_file, data, header=header)
     print("... done!")
+
+
+def tac_fit():
+    parser = argparse.ArgumentParser(
+        description="Fit model to TAC data."
+    )
+
+    parser.add_argument('task', choices=['tac_fit'])
+
+    parser.add_argument('tac_file',
+                        help='The file containing the TAC data.')
+    parser.add_argument('t',
+                        help='The column containing the acquisition times.')
+    parser.add_argument('inp',
+                        help='The column containing the input function data.')
+    parser.add_argument('tis',
+                        help='The column containing the tissue data.')
+
+    args = parser.parse_args()
+
+    with open(args.tac_file) as f:
+        header = f.readline()
+    header_cols = header.split()
+    header_cols = header_cols[1:]
+    data = np.loadtxt(args.tac_file)
+    data_dict = {}
+    for i in range(len(header_cols)):
+        data_dict[header_cols[i]] = data[:, i]
+
+    fig, ax = plt.subplots()
+    ax.plot(data_dict[args.t], data_dict[args.tis], 'gx', label=args.tis)
+    ax.plot(data_dict[args.t], data_dict[args.inp], 'rx', label=args.inp)
+    # ax.plot(t, blood_shift, 'kx', label="Blood shifted")
+    # ax.plot(t, best_fit, 'g-', label="Fit STEP1")
+    # ax.plot(t, best_fit2, 'k-', label="Fit STEP2")
+    # ax.plot(t, best_fit3, 'b-', label="Fit PATLAK")
+    plt.legend()
+    plt.show()
 
 
 if __name__ == "__main__":
     if sys.argv[1] == 'roi_means':
         roi_means()
+    elif sys.argv[1] == 'tac_fit':
+        tac_fit()
