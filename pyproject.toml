@@ -34,7 +34,8 @@ dependencies = [
 	'SimpleITK',
 	'matplotlib',
 	'scipy',
-	'lmfit'
+	'lmfit',
+	'xmltodict'
 ]
 
 [project.urls]

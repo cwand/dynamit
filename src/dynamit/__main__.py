@@ -5,9 +5,31 @@ import dynamit
 import matplotlib.pyplot as plt
 import lmfit
 import numpy as np
+import xmltodict
+from typing import Any, Callable, OrderedDict
 
 
-def main():
+def main(argv: list[str]):
+
+    print("Starting DYNAMIT1")
+    print()
+
+    tasks: dict[str,
+                Callable[[OrderedDict[str, Any], dict[str, Any]], None]] = {}
+
+    named_obj: dict[str, Any] = {}
+
+    # Parse XML input file
+    if len(argv) != 1:
+        exit("Missing command line argument: path to an XML file.")
+    xml_file = open(argv[0], "r")
+    task_tree = xmltodict.parse(xml_file.read(), force_list=('task'))
+    root = task_tree['dynamit1']
+
+    for task in root['task']:
+        tasks[task['@name']](task, named_obj)
+
+    print("DYNAMIT1 ended!")
 
     dcm_path = "C:\\Users\\bub8ga\\data\\dynamit-i\\KTH\\NM73"
     # dcm_path = "C:\\Users\\bub8ga\\data\\dynamit1\\kth\\NM73"
