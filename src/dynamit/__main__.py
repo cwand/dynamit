@@ -15,9 +15,7 @@ def main(argv: list[str]):
     print()
 
     tasks: dict[str,
-                Callable[[OrderedDict[str, Any], dict[str, Any]], None]] = {}
-
-    named_obj: dict[str, Any] = {}
+                Callable[[OrderedDict[str, Any]], None]] = {}
 
     # Parse XML input file
     if len(argv) != 1:
@@ -27,7 +25,7 @@ def main(argv: list[str]):
     root = task_tree['dynamit1']
 
     for task in root['task']:
-        tasks[task['@name']](task, named_obj)
+        tasks[task['@name']](task)
 
     print("DYNAMIT1 ended!")
 

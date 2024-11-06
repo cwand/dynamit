@@ -1,6 +1,7 @@
 import SimpleITK as sitk
 from datetime import datetime
 import numpy as np
+from typing import Union
 
 
 def get_acq_datetime(dicom_path: str) -> datetime:
@@ -59,3 +60,50 @@ def shift_time(y: list[float], t: list[float],
     t_inter = [tt - deltat for tt in t]
 
     return list(np.interp(t_inter, t, y))
+
+
+def save_tac(tac: dict[Union[str, int], list[float]], path: str):
+    """Saves the output from a function calculating ROI-means into a text file
+    using numpy.savetxt.
+
+    Arguments:
+    tac     --  The TAC-data (e.g. from lazy_series_roi_means)
+    path    --  The filename where the data will be saved.
+    """
+
+    # Put data and header text into appropriate containers
+    columns = []
+    header = ""
+    for label in tac:
+        columns.append(tac[label])
+        header = header + str(label) + "   "
+
+    # Put data into columns and save to file
+    data = np.column_stack(columns)
+    np.savetxt(path, data, header=header)
+
+
+def load_tac(path: str) -> dict[str, list[float]]:
+    """Loads a TAC-file saved with dynamit1.save_tac.
+
+    Arguments:
+    path    --  The filename of the TAC-file.
+
+    Return value:
+    A dict object with column headers as keys and data as values.
+    """
+
+    # Read labels from file
+    with open(path) as f:
+        header = f.readline()
+    header_cols = header.split()
+    header_cols = header_cols[1:]
+
+    # Load data (excluding header)
+    data = np.loadtxt(path)
+
+    # Put data into a dict object with correct labels
+    data_dict = {}
+    for i in range(len(header_cols)):
+        data_dict[header_cols[i]] = list(data[:, i])
+    return data_dict

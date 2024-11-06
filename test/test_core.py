@@ -1,4 +1,4 @@
-import os.path
+import os
 import unittest
 from datetime import datetime
 import dynamit
@@ -35,3 +35,22 @@ class TestShiftTime(unittest.TestCase):
         self.assertAlmostEqual(2.0, res[0], places=6)
         self.assertAlmostEqual(2.0, res[1], places=6)
         self.assertAlmostEqual(3.0, res[2], places=6)
+
+
+class TestSaveLoadTAC(unittest.TestCase):
+
+    def test_save_load_tac(self):
+        tac: dict[str | int, list[float]] = \
+            {1: [1.0, 2.0, 3.0],
+             '2': [0.5, 0.1, 3.0],
+             'tacq': [0.0, 1.2, 5.4]
+             }
+        dynamit.save_tac(tac, os.path.join('test', 'tac.txt'))
+        tac2 = dynamit.load_tac(os.path.join('test', 'tac.txt'))
+        self.assertEqual(tac2['tacq'], [0.0, 1.2, 5.4])
+        self.assertEqual(tac2['1'], [1.0, 2.0, 3.0])
+        self.assertEqual(tac2['2'], [0.5, 0.1, 3.0])
+
+    def tearDown(self):
+        if os.path.exists(os.path.join('test', 'tac.txt')):
+            os.remove(os.path.join('test', 'tac.txt'))

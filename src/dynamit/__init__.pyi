@@ -1,6 +1,6 @@
 import SimpleITK as sitk
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, OrderedDict
 
 # From core.py
 
@@ -8,6 +8,10 @@ def get_acq_datetime(dicom_path: str) -> datetime: ...
 
 def shift_time(y: list[float], t: list[float],
                deltat: float) -> list[float]: ...
+
+def save_tac(tac: dict[Union[str, int], list[float]], path: str): ...
+
+def load_tac(path: str) -> dict[str, list[float]]: ...
 
 # From image.py
 
@@ -43,3 +47,7 @@ def model_patlak(k: float,
                  v0: float,
                  t: list[float],
                  in_func: list[float]) -> list[float]: ...
+
+# From tasks.py
+
+def task_roi_means(task: OrderedDict[str, Any]) -> None: ...
