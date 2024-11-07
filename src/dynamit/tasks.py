@@ -1,6 +1,7 @@
 from typing import OrderedDict, Any, Optional
-
 import dynamit
+import lmfit
+import matplotlib.pyplot as plt
 
 
 def task_roi_means(task: OrderedDict[str, Any]):
@@ -63,3 +64,83 @@ def task_roi_means(task: OrderedDict[str, Any]):
     # Save file to disk
     dynamit.save_tac(dyn, out_path)
     print("... done!")
+
+
+def task_tac_fit(task: OrderedDict[str, Any]):
+    """Run the TACFit task. Fits model parameters to a measured TAC. The fit
+    is shown in standard out and a figure of the fitted curve and the data is
+    shown.
+    The input is an xml-structure, which must have the following content (in
+    any order):
+
+    <tac_path>PATH_TO_TAC_FILE</tac_path>
+    <time_label>LABEL_OF_TIME_DATA</time_label>
+    <inp_label>LABEL_OF_INPUT_FUNCTION_DATA</inp_label>
+    <tis_label>LABEL_OF_TISSUE_DATA</tis_label>
+    <model>FIT_MODEL</model>
+    <init>
+        <PARAM1>PARAM1_INIT_VALUE</PARAM1>
+        <PARAM2>PARAM2_INIT_VALUE</PARAM2>
+    </init>
+
+    """
+
+    print("Starting TAC-fitting.")
+
+    # Get the data path
+    tac_path = str(task['tac_path'])
+
+    # Get labels of relevant TACs
+    inp_label = str(task['inp_label'])
+    time_label = str(task['time_label'])
+    tis_label = str(task['tis_label'])
+
+    # Get required fit model:
+    fit_model = str(task['model'])
+
+    # Load TAC data
+    print("Loading TAC-data from", tac_path, "...")
+    tac = dynamit.load_tac(tac_path)
+    print("... done!")
+    print()
+
+    print("Fitting TAC data to model ", fit_model, ".")
+
+    # Dict of possible models
+    models = {
+        'step2': dynamit.model_step_2,
+        'step': dynamit.model_step,
+        'patlak': dynamit.model_patlak
+    }
+
+    # Put initial parameters into a dict
+    init_param = {}
+    for param in task['init']:
+        init_param[param] = float(task['init'][param])
+
+    # Define model to fit
+    model = lmfit.Model(models[fit_model], independent_vars=['t', 'in_func'])
+    # Run fit from initial values
+    res = model.fit(tac[tis_label], t=tac[time_label],
+                    in_func=tac[inp_label],
+                    **init_param)
+    # Report!
+    lmfit.report_fit(res)
+    # Calculate besti fitting model
+    best_fit = models[fit_model](**res.best_values,  # type: ignore
+                                 t=list(tac[time_label]),
+                                 in_func=list(tac[inp_label]))
+
+    print("... done!")
+    print()
+
+    print("Plotting...")
+    fig, ax = plt.subplots()
+    ax.plot(tac[time_label], tac[tis_label], 'gx', label=tis_label)
+    ax.plot(tac[time_label], tac[inp_label], 'rx', label=inp_label)
+    ax.plot(tac[time_label], best_fit, 'k-', label="Fit")
+    plt.legend()
+    plt.grid(visible=True)
+    plt.show()
+    print("... done!")
+    print()

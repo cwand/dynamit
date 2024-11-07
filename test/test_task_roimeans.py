@@ -7,7 +7,8 @@ import xmltodict
 class TestTaskROIMeans(unittest.TestCase):
 
     def test_task_simple(self):
-        f = open(os.path.join('test', 'xml_input', 'test_roi_means.xml'))
+        f = open(
+            os.path.join('test', 'xml_input', 'test_roi_means_simple.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['dynamit1']['task']
         dynamit.task_roi_means(task)
