@@ -2,6 +2,7 @@ import os
 import unittest
 from datetime import datetime
 import dynamit
+from typing import Union
 
 
 class TestGetAcqDateTime(unittest.TestCase):
@@ -40,7 +41,7 @@ class TestShiftTime(unittest.TestCase):
 class TestSaveLoadTAC(unittest.TestCase):
 
     def test_save_load_tac(self):
-        tac: dict[str | int, list[float]] = \
+        tac: dict[Union[str, int], list[float]] = \
             {1: [1.0, 2.0, 3.0],
              '2': [0.5, 0.1, 3.0],
              'tacq': [0.0, 1.2, 5.4]
