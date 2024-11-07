@@ -151,8 +151,8 @@ class TestLazySeriesRoiMeans(unittest.TestCase):
         self.assertEqual(tacq,
                          [0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
 
-        r1 = dyn[1]
-        r2 = dyn[2]
+        r1 = dyn['1']
+        r2 = dyn['2']
 
         self.assertEqual(r1[0], 0)
         self.assertAlmostEqual(r2[0], 31.3157, places=4)
@@ -187,8 +187,8 @@ class TestLazySeriesRoiMeans(unittest.TestCase):
             'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
         dyn = dynamit.lazy_series_roi_means(dcm_path, roi_path, resample='roi')
 
-        r1 = dyn[1]
-        r2 = dyn[2]
+        r1 = dyn['1']
+        r2 = dyn['2']
 
         self.assertAlmostEqual(r1[3], 13473.5, places=1)
         self.assertAlmostEqual(r2[3], 17120.9, places=1)
@@ -199,8 +199,8 @@ class TestLazySeriesRoiMeans(unittest.TestCase):
             'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
         dyn = dynamit.lazy_series_roi_means(dcm_path, roi_path, resample='img')
 
-        r1 = dyn[1]
-        r2 = dyn[2]
+        r1 = dyn['1']
+        r2 = dyn['2']
 
         self.assertAlmostEqual(r1[3], 11405.7, places=1)
         self.assertAlmostEqual(r2[3], 15053.1, places=1)
@@ -210,11 +210,11 @@ class TestLazySeriesRoiMeans(unittest.TestCase):
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
         dyn = dynamit.lazy_series_roi_means(dcm_path, roi_path,
-                                            labels={0: 'a',
-                                                    2: 14})
+                                            labels={'0': 'a',
+                                                    '2': '14'})
         self.assertTrue('a' in dyn.keys())
-        self.assertTrue(1 in dyn.keys())
-        self.assertTrue(14 in dyn.keys())
+        self.assertTrue('1' in dyn.keys())
+        self.assertTrue('14' in dyn.keys())
         self.assertTrue('tacq' in dyn.keys())
-        self.assertFalse(0 in dyn.keys())
-        self.assertFalse(2 in dyn.keys())
+        self.assertFalse('0' in dyn.keys())
+        self.assertFalse('2' in dyn.keys())

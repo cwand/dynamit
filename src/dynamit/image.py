@@ -1,7 +1,7 @@
 import SimpleITK as sitk
 from collections import defaultdict
 import dynamit
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 
 def load_dynamic_series(dicom_path: str) -> dict[str, Any]:
@@ -103,9 +103,8 @@ def series_roi_means(series: list[sitk.Image],
 def lazy_series_roi_means(series_path: str,
                           roi_path: str,
                           resample: Optional[str] = None,
-                          labels: Optional[dict[
-                              Union[str, int], Union[str, int]]] = None)\
-        -> dict[Union[str, int], list[float]]:
+                          labels: Optional[dict[str, str]] = None)\
+        -> dict[str, list[float]]:
     """Do a lazy calculation of mean image values in a ROI. Lazy in this
     context means that the images are loaded one at a time and the mean values
     computed, before the image is removed from memory and the next image is
@@ -131,9 +130,9 @@ def lazy_series_roi_means(series_path: str,
     labels      --  Choose different labels for the resulting dict object. By
                     default the label values in the ROI image is chosen. A
                     dictionary can be inserted here to replace those values. If
-                    for example the ROI label value 1 should be replaced with
-                    'left' and the value 2 should be replaced with 'right' use
-                    the argument labels={1: 'left', 2: 'right'}
+                    for example the ROI label value '1' should be replaced with
+                    'left' and the value '2' should be replaced with 'right'
+                    use the argument labels={'1': 'left', '2': 'right'}.
 
     Return value:
     A dict object with ROI labels as keys and a list with ROI mean values for
@@ -146,7 +145,7 @@ def lazy_series_roi_means(series_path: str,
     if labels is None:
         labels = {}
 
-    res: dict[Union[str, int], list[float]] = defaultdict(list)
+    res: dict[str, list[float]] = defaultdict(list)
 
     # Prepare series reader
     reader = sitk.ImageSeriesReader()
@@ -189,7 +188,7 @@ def lazy_series_roi_means(series_path: str,
         label_stats_filter.Execute(img, roi)
         for label in label_stats_filter.GetLabels():
             # Append the mean value to the list for each label.
-            res[labels.get(label, label)].append(
+            res[labels.get(str(label), str(label))].append(
                 label_stats_filter.GetMean(label))
 
     return res
