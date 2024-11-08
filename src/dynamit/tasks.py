@@ -1,4 +1,7 @@
 from typing import OrderedDict, Any, Optional
+
+import numpy as np
+
 import dynamit
 import lmfit
 import matplotlib.pyplot as plt
@@ -104,6 +107,11 @@ def task_tac_fit(task: OrderedDict[str, Any]):
     print("... done!")
     print()
 
+    # Get tcut if required
+    t_cut = len(tac[time_label])
+    if 'tcut' in task:
+        t_cut = int(task['tcut'])
+
     print("Fitting TAC data to model ", fit_model, ".")
 
     # Dict of possible models
@@ -121,15 +129,19 @@ def task_tac_fit(task: OrderedDict[str, Any]):
     # Define model to fit
     model = lmfit.Model(models[fit_model], independent_vars=['t', 'in_func'])
     # Run fit from initial values
-    res = model.fit(tac[tis_label], t=tac[time_label],
-                    in_func=tac[inp_label],
+    res = model.fit(tac[tis_label][0:t_cut], t=tac[time_label][0:t_cut],
+                    in_func=tac[inp_label][0:t_cut],
                     **init_param)
+
     # Report!
     lmfit.report_fit(res)
-    # Calculate besti fitting model
-    best_fit = models[fit_model](t=list(tac[time_label]),  # type: ignore
-                                 in_func=list(tac[inp_label]),
+    # Calculate best fitting model
+    best_fit = models[fit_model](t=tac[time_label][0:t_cut],  # type: ignore
+                                 in_func=list(tac[inp_label][0:t_cut]),
                                  **res.best_values)
+    # Calculate prediction interval
+    e_fit = res.eval_uncertainty(t=tac[time_label][0:t_cut], sigma=2)
+    p_fit = res.dely_predicted
 
     print("... done!")
     print()
@@ -137,8 +149,15 @@ def task_tac_fit(task: OrderedDict[str, Any]):
     print("Plotting...")
     fig, ax = plt.subplots()
     ax.plot(tac[time_label], tac[tis_label], 'gx', label=tis_label)
-    ax.plot(tac[time_label], tac[inp_label], 'rx', label=inp_label)
-    ax.plot(tac[time_label], best_fit, 'k-', label="Fit")
+    ax.plot(tac[time_label], tac[inp_label], 'rx--', label=inp_label)
+    ax.plot(tac[time_label][0:t_cut], best_fit, 'k-', label="Fit")
+    ax.fill_between(tac[time_label][0:t_cut], best_fit - p_fit, best_fit + p_fit,
+                     color="#d0d0a060", label=r'$2\sigma$ prediction interval')
+    ax.fill_between(tac[time_label][0:t_cut], best_fit - e_fit, best_fit + e_fit,
+                    color="#c0c0c0", label=r'$2\sigma$ confidence interval')
+    ax.set_xlabel('Time [sec]')
+    ax.set_ylabel('Mean ROI-activity concentration [Bq/mL]')
+
     plt.legend()
     plt.grid(visible=True)
     plt.show()

@@ -1,15 +1,17 @@
 <dynamit1>
     <task name="TACFit">
-        <tac_path>C:\Users\bub8ga\data\dynamit1\kth\out\roi_means.dat</tac_path>
+        <!-- <tac_path>C:\Users\bub8ga\data\dynamit1\kth\out\roi_means.dat</tac_path> -->
+        <tac_path>C:\Users\bub8ga\data\dynamit-i\KTH-out\roi_means.dat</tac_path>
         <time_label>tacq</time_label>
         <inp_label>3</inp_label>
         <tis_label>1</tis_label>
         <model>step2</model>
         <init>
-            <amp1>0.05</amp1>
+            <amp1>0.06</amp1>
             <extent1>20</extent1>
-            <amp2>0.01</amp2>
-            <extent2>170</extent2>
+            <amp2>0.02</amp2>
+            <extent2>200</extent2>
         </init>
+        <!-- <tcut>35</tcut> -->
     </task>
 </dynamit1>
