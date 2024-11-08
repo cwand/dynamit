@@ -1,7 +1,5 @@
 from typing import OrderedDict, Any, Optional
 
-import numpy as np
-
 import dynamit
 import lmfit
 import matplotlib.pyplot as plt
@@ -151,9 +149,13 @@ def task_tac_fit(task: OrderedDict[str, Any]):
     ax.plot(tac[time_label], tac[tis_label], 'gx', label=tis_label)
     ax.plot(tac[time_label], tac[inp_label], 'rx--', label=inp_label)
     ax.plot(tac[time_label][0:t_cut], best_fit, 'k-', label="Fit")
-    ax.fill_between(tac[time_label][0:t_cut], best_fit - p_fit, best_fit + p_fit,
-                     color="#d0d0a060", label=r'$2\sigma$ prediction interval')
-    ax.fill_between(tac[time_label][0:t_cut], best_fit - e_fit, best_fit + e_fit,
+    ax.fill_between(tac[time_label][0:t_cut],
+                    best_fit - p_fit,
+                    best_fit + p_fit,
+                    color="#d0d0a060", label=r'$2\sigma$ prediction interval')
+    ax.fill_between(tac[time_label][0:t_cut],
+                    best_fit - e_fit,
+                    best_fit + e_fit,
                     color="#c0c0c0", label=r'$2\sigma$ confidence interval')
     ax.set_xlabel('Time [sec]')
     ax.set_ylabel('Mean ROI-activity concentration [Bq/mL]')
