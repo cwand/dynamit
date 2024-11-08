@@ -44,7 +44,7 @@ def model_step_2(t: list[float],
 
 def model_patlak(t: list[float],
                  in_func: list[float],
-                 k: float,
+                 k1: float,
                  v0: float) -> list[float]: ...
 
 # From tasks.py

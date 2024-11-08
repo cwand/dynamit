@@ -11,7 +11,7 @@ class TestModelPatlak(unittest.TestCase):
         tp = [0.0, 4.3, 7.5, 12.4, 16.2]
         in_func = [0.0, 10.3, 12.1, 8.1, 4.1]
 
-        m = dynamit.model_patlak(k=k, v0=v0, t=tp, in_func=in_func)
+        m = dynamit.model_patlak(k1=k, v0=v0, t=tp, in_func=in_func)
 
         self.assertEqual(5, len(m))
         self.assertAlmostEqual(0.0, m[0], places=3)
