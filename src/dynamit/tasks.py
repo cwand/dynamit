@@ -127,9 +127,9 @@ def task_tac_fit(task: OrderedDict[str, Any]):
     # Report!
     lmfit.report_fit(res)
     # Calculate besti fitting model
-    best_fit = models[fit_model](**res.best_values,  # type: ignore
-                                 t=list(tac[time_label]),
-                                 in_func=list(tac[inp_label]))
+    best_fit = models[fit_model](t=list(tac[time_label]),  # type: ignore
+                                 in_func=list(tac[inp_label]),
+                                 **res.best_values)
 
     print("... done!")
     print()

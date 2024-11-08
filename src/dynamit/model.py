@@ -35,8 +35,8 @@ def _model_step_integrand(tau: float, t: float, amp: float, extent: float,
     return resp * float(np.interp(tau, tp, in_func))
 
 
-def model_step(amp: float, extent: float, t: list[float],
-               in_func: list[float]) -> list[float]:
+def model_step(t: list[float], in_func: list[float],
+               amp: float, extent: float) -> list[float]:
     """Solves the model where the input response function is assumed to be a
     step function.
     This function calculates the convolution of a sampled input function with
@@ -48,10 +48,10 @@ def model_step(amp: float, extent: float, t: list[float],
     the input function is interpolated linearly between sample points.
 
     Arguments:
-    amp     --  The amplitude of the step function.
-    extent  --  The length of the step function.
     t       --  The time points of the input function samples.
     in_func --  The input function samples.
+    amp     --  The amplitude of the step function.
+    extent  --  The length of the step function.
 
     Return value:
     A list containing the modeled values at each time point.
@@ -112,12 +112,12 @@ def _model_step_2_integrand(tau: float, t: float,
     return resp * float(np.interp(tau, tp, in_func))
 
 
-def model_step_2(amp1: float,
+def model_step_2(t: list[float],
+                 in_func: list[float],
+                 amp1: float,
                  extent1: float,
                  amp2: float,
-                 extent2: float,
-                 t: list[float],
-                 in_func: list[float]) -> list[float]:
+                 extent2: float) -> list[float]:
     """Solves the model where the input response function is assumed to be a
     2-step function.
     This function calculates the convolution of a sampled input function with
@@ -130,12 +130,12 @@ def model_step_2(amp1: float,
     the input function is interpolated linearly between sample points.
 
     Arguments:
+    t       --  The time points of the input function samples.
+    in_func --  The input function samples.
     amp1    --  The amplitude of the step function on [0, extent1).
     extent1 --  The length of the first step function.
     amp2    --  The amplitude of the step function on [extent1, extent2).
     extent2 --  The length of the second step function.
-    t       --  The time points of the input function samples.
-    in_func --  The input function samples.
 
     Return value:
     A list containing the modeled values at each time point.
@@ -155,10 +155,10 @@ def model_step_2(amp1: float,
     return res
 
 
-def model_patlak(k: float,
-                 v0: float,
-                 t: list[float],
-                 in_func: list[float]) -> list[float]:
+def model_patlak(t: list[float],
+                 in_func: list[float],
+                 k: float,
+                 v0: float) -> list[float]:
     """Solves the Patlak-model.
     In the Patlak model the observed signal is assumed to be a constant k times
     the integrated input function up until that point, plus another constant v0
@@ -166,10 +166,10 @@ def model_patlak(k: float,
     R(t) = k * int(in_func, 0, t) + v0*in_func(t)
 
     Arguments:
-    k       --  The constant k in the Patlak model.
-    v0      --  The constant v0 in the Patlak model.
     t       --  The time points of the input function samples.
     in_func --  The input function samples.
+    k       --  The constant k in the Patlak model.
+    v0      --  The constant v0 in the Patlak model.
 
     Return value:
     A list containing the modeled values at each time point.

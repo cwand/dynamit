@@ -32,20 +32,20 @@ def lazy_series_roi_means(series_path: str,
 
 # From model.py
 
-def model_step(amp: float, extent: float, t: list[float],
-               in_func: list[float]) -> list[float]: ...
+def model_step(t: list[float], in_func: list[float],
+               amp: float, extent: float) -> list[float]: ...
 
-def model_step_2(amp1: float,
+def model_step_2(t: list[float],
+                 in_func: list[float],
+                 amp1: float,
                  extent1: float,
                  amp2: float,
-                 extent2: float,
-                 t: list[float],
-                 in_func: list[float]) -> list[float]: ...
+                 extent2: float) -> list[float]: ...
 
-def model_patlak(k: float,
-                 v0: float,
-                 t: list[float],
-                 in_func: list[float]) -> list[float]: ...
+def model_patlak(t: list[float],
+                 in_func: list[float],
+                 k: float,
+                 v0: float) -> list[float]: ...
 
 # From tasks.py
 
