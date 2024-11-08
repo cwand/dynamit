@@ -115,6 +115,7 @@ def task_tac_fit(task: OrderedDict[str, Any]):
     # Dict of possible models
     models = {
         'step2': dynamit.model_step_2,
+        'fermi2': dynamit.model_fermi_2,
         'step': dynamit.model_step,
         'patlak': dynamit.model_patlak
     }

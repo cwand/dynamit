@@ -5,15 +5,17 @@
         <time_label>tacq</time_label>
         <inp_label>Aorta</inp_label>
         <tis_label>KidneyR</tis_label>
-        <model>patlak</model>
+        <model>fermi2</model>
         <init>
-            <!--<amp1>0.06</amp1>
-            <extent1>20</extent1>
+            <amp1>0.06</amp1>
+            <extent1>17</extent1>
+            <width1>3</width1>
             <amp2>0.02</amp2>
-            <extent2>200</extent2>-->
-            <k1>1.0</k1>
-            <v0>0.1</v0>
+            <extent2>170</extent2>
+            <width2>20</width2>
+            <!--<k1>0.5</k1>
+            <v0>0.5</v0>-->
         </init>
-        <tcut>29</tcut>
+        <!-- <tcut>29</tcut> -->
     </task>
 </dynamit1>
