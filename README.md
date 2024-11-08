@@ -1,2 +1,2 @@
 # dynamit1
-Code for analysis in the Dynamit1 project
+Code for analysis in the DynaMIT I: GFR project
