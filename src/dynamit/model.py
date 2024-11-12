@@ -191,8 +191,8 @@ def _model_fermi_2_integrand(tau: float, t: float,
 
     # Compute response function value at t - tau
     resp = (amp1 *
-            (1.0 + np.exp(-extent1 / np.abs(width1))) /
-            (1.0 + np.exp((t - tau - extent1)/np.abs(width1))) +
+            (1.0 + np.exp(-extent1 / width1)) /
+            (1.0 + np.exp((t - tau - extent1) / width1)) +
             amp2 * (1.0 + np.exp(-extent2 / width2)) /
             (1.0 + np.exp((t - tau - extent2) / width2)))
 
