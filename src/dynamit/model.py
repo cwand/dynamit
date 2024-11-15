@@ -238,8 +238,6 @@ def model_fermi_2(t: list[float],
     Return value:
     A list containing the modeled values at each time point.
     """
-    print(f"amp1={amp1}, amp2={amp2}, e1={extent1},"
-          f"e2={extent2}, w1={width1}, w2={width2}")
     res = []
     for ti in t:
         # For each time point the integrand (see above) is integrated.

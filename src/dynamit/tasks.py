@@ -79,11 +79,17 @@ def task_tac_fit(task: OrderedDict[str, Any]):
     <inp_label>LABEL_OF_INPUT_FUNCTION_DATA</inp_label>
     <tis_label>LABEL_OF_TISSUE_DATA</tis_label>
     <model>FIT_MODEL</model>
-    <init>
-        <PARAM1>PARAM1_INIT_VALUE</PARAM1>
-        <PARAM2>PARAM2_INIT_VALUE</PARAM2>
-    </init>
-
+    <param>
+        <name>PARAM1_NAME</name>
+        <init>PARAM1_INIT_VALUE</init>
+        <min>PARAM1_MIN_VALUE</min> <!-- OPTIONAL -->
+        <max>PARAM1_MAX_VALUE</max> <!-- OPTIONAL -->
+    </param>
+    <param>
+        <name>PARAM2_NAME</name>
+        <init>PARAM2_INIT_VALUE</init>
+    </param>
+    ...
     """
 
     print("Starting TAC-fitting.")
@@ -120,17 +126,29 @@ def task_tac_fit(task: OrderedDict[str, Any]):
         'patlak': dynamit.model_patlak
     }
 
-    # Put initial parameters into a dict
-    init_param = {}
-    for param in task['init']:
-        init_param[param] = float(task['init'][param])
+    # Put parameters into a dict
+    params = {}
+    for param in task['param']:
+        # Initial parameter value
+        param_dict = {'value': float(param['init'])}
+        # Optional parameter minimum
+        if 'min' in param:
+            param_dict['min'] = float(param['min'])
+        # Optional parameter maximum
+        if 'max' in param:
+            param_dict['max'] = float(param['max'])
+        # Get parameter name and store in dict
+        params[param['name']] = param_dict
+
+    # Create lmfit Parameters-object
+    parameters = lmfit.create_params(**params)
 
     # Define model to fit
     model = lmfit.Model(models[fit_model], independent_vars=['t', 'in_func'])
     # Run fit from initial values
     res = model.fit(tac[tis_label][0:t_cut], t=tac[time_label][0:t_cut],
                     in_func=tac[inp_label][0:t_cut],
-                    **init_param)
+                    params=parameters)
 
     # Report!
     lmfit.report_fit(res)
