@@ -1,2 +1,2 @@
-# dynamit1
-Code for analysis in the DynaMIT I: GFR project
+# dynamit
+Analysis of dynamic images from SPECT and PET modalities
