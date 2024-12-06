@@ -39,7 +39,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/cwand/dynamit1"
+Repository = "https://github.com/cwand/dynamit"
 
 [tool.pytest.ini_options]
 addopts = "--cov=dynamit --cov-report term-missing"
